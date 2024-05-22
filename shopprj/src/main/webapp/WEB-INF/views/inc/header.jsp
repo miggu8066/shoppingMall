@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <!-- 로그인 회원가입 창 -->
 <div id="userModal" class="cd-user-modal"> <!-- this is the entire modal form, including the background -->
 <div class="cd-user-modal-container"> <!-- this is the container wrapper -->
@@ -9,7 +11,7 @@
 </ul>
 
 <!-- 로그인 -->
-<form name="loginForm" method="post" action="" class="cd-form">
+<form name="loginForm" method="post" action="login" class="cd-form">
 	<div id="cd-login">
 		<p class="fieldset">
 			<label class="image-replace cd-username" for="signin-username">아이디</label>
@@ -97,7 +99,7 @@
               <div class="col-md-8">
                   <div class="user-menu">
                       <ul>
-                          <li><a href="#"><i class="fa fa-user"></i>내정보</a></li>
+                          <!-- <li><a href="#"><i class="fa fa-user"></i>내정보</a></li> -->
                           <li><a href="#"><i class="fa fa-heart"></i>찜</a></li>
                           <li><a href="cart.html"><i class="fa fa-user"></i>장바구니</a></li>
                       </ul>
@@ -105,13 +107,28 @@
                   
               </div>
               
-              <div class="col-md-4 col-sm-push-3">
-                  <div class="user-menu cd-register">
-                      <ul>
-                          <li><a href="#" ><i class="fa fa-user"></i>로그인</a></li>
-                      </ul>
-                  </div>
-              </div>
+              <c:choose>
+              	<c:when test="${not empty userName}">
+              		<div class="col-md-4">
+	                  <div class="user-menu text-right">
+	                      <ul>
+	                      	  <li><a href="#"><i class="fa fa-user"></i> ${userName} 님</a></li>
+	                          <li><a href="/home/logout" ><i class="fa fa-user"></i>로그아웃</a></li>
+	                      </ul>
+	                  </div>
+	                </div>
+              	</c:when>
+              	<c:otherwise>
+					<div class="col-md-4">
+						<div class="user-menu cd-register text-right">
+							<ul>
+								<li><a href="#"><i class="fa fa-user"></i>로그인</a></li>
+							</ul>
+						</div>
+					</div>
+				</c:otherwise>
+              </c:choose>
+              
           </div>
       </div>
   </div> <!-- End header area -->

@@ -8,4 +8,5 @@ public interface BoardDao {
 	void insertBoard(BoardDto boardDto);
 	List<BoardDto> listBoard();
 	BoardDto detailBoard(int userId);
+	public boolean getUserkeyByUsername(String sessionId);
 }

@@ -39,6 +39,12 @@ public class BoardServiceImpl implements BoardService{
 		return boardDao.detailBoard(userId);
 	}
 
+	@Override
+	public boolean findUserkeyBySession(String sessionId, int userId) {
+		
+		return boardDao.getUserkeyByUsername(sessionId);
+	}
+
 
 	
 }

@@ -46,6 +46,8 @@ public class BoardDaoImpl implements BoardDao{
 
 	String getBoardByUserIdQuery = "SELECT * FROM board where user_key = ?";
 	
+	String getUserkeyByUsernameQuery = "SELECT user_key FROM member where user_id = ?";
+	
 	@Override
 	public void insertBoard(BoardDto boardDto) {
 		
@@ -161,6 +163,25 @@ public class BoardDaoImpl implements BoardDao{
 		
 		
 		return boardDto;
+	}
+
+	@Override
+	public boolean getUserkeyByUsername(String sessionId) {
+		boolean getUserKey = false;
+		try {
+			Connection conn = dataSource.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(getUserkeyByUsernameQuery);
+			pstmt.setString(1, getBoardByUserIdQuery);
+			ResultSet rs = pstmt.executeQuery();
+			if(rs.next()) {
+				return getUserKey = rs.getString("user_key") != null;
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return getUserKey;
 	}
 
 	
