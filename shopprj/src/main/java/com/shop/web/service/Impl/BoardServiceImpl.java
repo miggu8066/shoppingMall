@@ -17,13 +17,15 @@ public class BoardServiceImpl implements BoardService{
 	private BoardDao boardDao;
 
 	@Override
-	public void writeBoard(BoardDto boardDto) {
-		boardDto.setUserKey(1);
+	public void writeBoard(BoardDto boardDto, String loginDto) {
+		Integer storedUserKey = boardDao.getUserkeyByUsername(loginDto);
+		
+		boardDto.setUserKey(storedUserKey);
 		boardDto.setRegDate(new Date());
 		boardDto.setDelState(1);
 		boardDto.setImg("이미지 테스트");
 		
-		boardDao.insertBoard(boardDto);
+		boardDao.insertBoard(boardDto, loginDto);
 	}
 
 	@Override
@@ -40,9 +42,15 @@ public class BoardServiceImpl implements BoardService{
 	}
 
 	@Override
-	public boolean findUserkeyBySession(String sessionId, int userId) {
+	public int findUserkeyBySession(String sessionId, int userId) {
 		
-		return boardDao.getUserkeyByUsername(sessionId);
+		Integer storedUserKey = boardDao.getUserkeyByUsername(sessionId);
+		
+		if(storedUserKey != 0 && storedUserKey.equals(userId)) {
+			return storedUserKey;
+		}
+		
+		return storedUserKey;
 	}
 
 

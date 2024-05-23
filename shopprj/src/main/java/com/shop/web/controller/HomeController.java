@@ -37,25 +37,13 @@ public class HomeController {
 	private LoginService loginService;
 	
 	@GetMapping("/main")
-	public String main(HttpServletRequest request, Model model) {
-		HttpSession session = request.getSession(false);
-		if(session != null) {
-			LoginDto user = (LoginDto) session.getAttribute("user");
-			if(user != null) {
-				model.addAttribute("userName", user.getUserId());
-				return "main";
-			}
-		}
+	public String main(HttpServletRequest request) {
 		
 		return "main";
 	}
 	
 	@PostMapping("/register")
 	public String register(@ModelAttribute MemberDto memberDto) {
-		System.out.println("email : " + memberDto.getEmail());
-		System.out.println("name : " + memberDto.getName());
-		System.out.println("Id : " + memberDto.getId());
-		System.out.println("pwd : " + memberDto.getPwd());
 		
 		memberService.registerMember(memberDto);
 		
@@ -96,47 +84,55 @@ public class HomeController {
 	}
 	
 	@GetMapping("/board")
-	public String board(Model model) {
+	public String board(HttpServletRequest request, Model model) {
 		
 		List<BoardDto> boardList = boardService.getBoardList();
 		model.addAttribute("boardList", boardList);
 		
-		return "board.list";
+		return "main.board.list";
 	}
 	
 	@GetMapping("/board/write")
-	public String boardWrite() {
+	public String boardWrite(HttpServletRequest request) {
 		
-		return "board.write";
+		return "main.board.write";
 	}
 	
 	@PostMapping("/board/writeProcess")
-	public String writeProcess(@ModelAttribute BoardDto boardDto) {
+	public String writeProcess(HttpServletRequest request, @ModelAttribute BoardDto boardDto) {
+		HttpSession session = request.getSession(false);
 		
-		boardService.writeBoard(boardDto);
+		if(session != null) {
+			LoginDto loginDto = (LoginDto) session.getAttribute("user");
+			if(loginDto != null) {
+				boardService.writeBoard(boardDto, loginDto.getUserId());
+				return "redirect:/home/board";
+			}
+		}
 		
-		return "redirect:/home/board";
+		return "redirect:/home/main";
 	}
 	
 	@GetMapping("/board/detail")
 	public String boardDetail(HttpServletRequest request, @RequestParam("uid") int userId, Model model) {
+		int getFindKey = 0;
 		HttpSession session = request.getSession(false);
-		LoginDto loginDto = (LoginDto) session.getAttribute("user");
 		
-		System.out.println(loginDto.getUserId());
+		if(session != null) {
+			LoginDto loginDto = (LoginDto) session.getAttribute("user");
+			if(loginDto != null) {
+				getFindKey = boardService.findUserkeyBySession(loginDto.getUserId(), userId);
+				model.addAttribute("userName", loginDto.getUserId());
+			}
+		}
 		
-		boolean getFindKey = boardService.findUserkeyBySession(loginDto.getUserId(), userId);
 		
 		BoardDto boardDetailList = boardService.getBoardByUserId(userId);
 		model.addAttribute("boardDetail", boardDetailList);
-		
-		if(getFindKey) {
-			model.addAttribute("canEdit", true);
-		} else {
-			model.addAttribute("canEdit", false);
-		}
+		model.addAttribute("canEdit", getFindKey);
 
-		return "board.detail";
+
+		return "main.board.detail";
 		
 	}
 }

@@ -11,7 +11,7 @@
 </ul>
 
 <!-- 로그인 -->
-<form name="loginForm" method="post" action="login" class="cd-form">
+<form name="loginForm" method="post" action="/home/login" class="cd-form">
 	<div id="cd-login">
 		<p class="fieldset">
 			<label class="image-replace cd-username" for="signin-username">아이디</label>
@@ -34,7 +34,7 @@
 </form>
 
 <!-- 회원가입 -->
-<form name="registerForm" method="post" action="register" class="cd-form">
+<form name="registerForm" method="post" action="/home/register" class="cd-form">
 	<div id="cd-signup">
 
 		<p class="fieldset">

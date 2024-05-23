@@ -67,7 +67,44 @@
 		
  		document.loginForm.submit();
  	}
+	
+	function fnBoardWrite() {
+		window.location.href = "/home/board/write";
+	}
+	
+	function fnDoWrite() {
+		var title = document.writeForm.title.value;
+		var content = document.writeForm.content.value;
+		
+		if(!title){
+			document.writeForm.title.focus();
+			alert("제목을 입력해주세요.");
+			return false;
+		}
+		
+		if(!content){
+			document.writeForm.content.focus();
+			alert("내용을 입력해주세요.");
+			return false;
+		}
+		
+		var writeConfirm = confirm("게시글을 등록 하시겠습니까?");
+		
+		if(writeConfirm){
+			alert("등록이 완료돼었습니다.");
+			document.writeForm.submit();
+		}
+		
+		
+	}
+	
 </script>
+
+	<style>
+		th {
+			background-color: #F4F4F4;
+		}
+	</style>
 </head>
 <body>
 

@@ -5,8 +5,8 @@ import java.util.List;
 import com.shop.web.dto.BoardDto;
 
 public interface BoardDao {
-	void insertBoard(BoardDto boardDto);
+	void insertBoard(BoardDto boardDto, String loginDto);
 	List<BoardDto> listBoard();
 	BoardDto detailBoard(int userId);
-	public boolean getUserkeyByUsername(String sessionId);
+	public int getUserkeyByUsername(String sessionId);
 }
