@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.shop.web.dto.BoardDto;
 import com.shop.web.dto.LoginDto;
@@ -93,44 +94,39 @@ public class HomeController {
 	}
 	
 	@GetMapping("/board/write")
-	public String boardWrite(HttpServletRequest request) {
+	public String boardWrite(HttpServletRequest request, Model model) {
 		
 		return "main.board.write";
 	}
 	
 	@PostMapping("/board/writeProcess")
 	public String writeProcess(HttpServletRequest request, @ModelAttribute BoardDto boardDto) {
-		HttpSession session = request.getSession(false);
-		
-		if(session != null) {
-			LoginDto loginDto = (LoginDto) session.getAttribute("user");
-			if(loginDto != null) {
-				boardService.writeBoard(boardDto, loginDto.getUserId());
-				return "redirect:/home/board";
-			}
+		String userName = (String) request.getAttribute("userName");
+
+		if(userName == null) { 
+			return "redirect:/home/main"; 
+		} else {
+			
+			List<String> uploadFileNames = boardService.saveFiles(boardDto);
+			
+			boardService.writeBoard(boardDto, userName, uploadFileNames);
+			
+			return "redirect:/home/board";
 		}
-		
-		return "redirect:/home/main";
 	}
 	
 	@GetMapping("/board/detail")
-	public String boardDetail(HttpServletRequest request, @RequestParam("uid") int userId, Model model) {
+	public String boardDetail(HttpServletRequest request, @RequestParam("uid") int userId, @RequestParam("bid") int boardId, Model model) {
 		int getFindKey = 0;
-		HttpSession session = request.getSession(false);
 		
-		if(session != null) {
-			LoginDto loginDto = (LoginDto) session.getAttribute("user");
-			if(loginDto != null) {
-				getFindKey = boardService.findUserkeyBySession(loginDto.getUserId(), userId);
-				model.addAttribute("userName", loginDto.getUserId());
-			}
-		}
+		String userName = (String) request.getAttribute("userName");
+
+		getFindKey = boardService.findUserkeyBySession(userName, userId);
 		
+		BoardDto boardDetailList = boardService.getBoardByUserId(userId, boardId);
 		
-		BoardDto boardDetailList = boardService.getBoardByUserId(userId);
 		model.addAttribute("boardDetail", boardDetailList);
 		model.addAttribute("canEdit", getFindKey);
-
 
 		return "main.board.detail";
 		

@@ -44,14 +44,12 @@ public class BoardDaoImpl implements BoardDao{
 			= "SELECT * FROM member "
 			+ "WHERE user_key = ? ";
 
-	String getBoardByUserIdQuery = "SELECT * FROM board where user_key = ?";
+	String getBoardByUserIdQuery = "SELECT * FROM board where user_key = ? and board_key = ?";
 	
 	String getUserkeyByUsernameQuery = "SELECT user_key FROM member where user_id = ?";
 	
 	@Override
-	public void insertBoard(BoardDto boardDto, String loginDto) {
-		
-		
+	public void insertBoard(BoardDto boardDto, List<String> uploadFileNames) {
 		try {
 			Connection conn = dataSource.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(insertSql);
@@ -59,10 +57,12 @@ public class BoardDaoImpl implements BoardDao{
 			Date utilDate = boardDto.getRegDate();
 			java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
 			
+			String joinedFileNames = String.join(", ", uploadFileNames);
+			
 			pstmt.setInt(1, boardDto.getUserKey());
 			pstmt.setString(2, boardDto.getTitle());
 			pstmt.setString(3, boardDto.getContent());
-			pstmt.setString(4, boardDto.getImg());
+			pstmt.setString(4, joinedFileNames);
 			pstmt.setDate(5, sqlDate);
 			pstmt.setInt(6, boardDto.getDelState());
 			
@@ -74,9 +74,6 @@ public class BoardDaoImpl implements BoardDao{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
-		
 	}
 
 	@Override
@@ -123,13 +120,14 @@ public class BoardDaoImpl implements BoardDao{
 	}
 
 	@Override
-	public BoardDto detailBoard(int userId) {
+	public BoardDto detailBoard(int userId, int boardId) {
 		BoardDto boardDto = null;
 		try {
 			Connection conn = dataSource.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(getBoardByUserIdQuery);
 			
 			pstmt.setInt(1, userId);
+			pstmt.setInt(2, boardId);
 			
 			ResultSet rs = pstmt.executeQuery();
 			
@@ -138,9 +136,9 @@ public class BoardDaoImpl implements BoardDao{
 				String title = rs.getString("board_title");
 				String content = rs.getString("board_content");
 				java.sql.Date regDate 	= rs.getDate("board_regdate");
-				String img = rs.getString("board_img");
+				String db_img = rs.getString("board_img");
 				
-				boardDto = new BoardDto(userkey, title, content, regDate, img);
+				boardDto = new BoardDto(userkey, title, content, regDate, db_img);
 				
 				PreparedStatement Pstmt2 = conn.prepareStatement(selectMemberNameQuery);
 				Pstmt2.setInt(1, userId);

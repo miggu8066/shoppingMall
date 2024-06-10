@@ -65,7 +65,13 @@
 	    <artifactId>jstl</artifactId>
 	    <version>1.2</version> <!-- 또는 적절한 버전 -->
 	</dependency>
-
+	
+	<!-- 서블릿 3.0이상 사용 가능한 파일 업로드 api-->
+	<dependency>
+		<groupId>commons-fileupload</groupId>
+		<artifactId>commons-fileupload</artifactId>
+		<version>1.4</version>
+	</dependency>
 	
   </dependencies>
   

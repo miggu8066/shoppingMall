@@ -75,7 +75,8 @@
 	function fnDoWrite() {
 		var title = document.writeForm.title.value;
 		var content = document.writeForm.content.value;
-		
+		console.log(title);
+		console.log(content);
 		if(!title){
 			document.writeForm.title.focus();
 			alert("제목을 입력해주세요.");
@@ -94,9 +95,44 @@
 			alert("등록이 완료돼었습니다.");
 			document.writeForm.submit();
 		}
+	}
+	
+	function previewImages(event) {
+		var files = event.target.files;
+		var preview = document.getElementById("imagePreview");
 		
+		preview.innerHTML = "";
+		
+		for(var i=0; i<files.length; i++){
+			var file = files[i];
+			var reader = new FileReader();
+			
+			reader.onload = function(event){
+				var img = document.createElement("img");
+				img.src = event.target.result;
+				
+				preview.appendChild(img);
+			};
+			
+			console.log(file);
+			reader.readAsDataURL(file);
+		}
+		
+		/* for(var image of event.target.files){
+			var reader = new FileReader();
+			
+			reader.onload = function(event) {
+				var img = document.createElement("img");
+				img.setAttribute("src", event.target.result);
+				document.querySelector("textarea#imagePreview").appendChild(img);
+			};
+			
+			console.log(image);
+			reader.readAsDataURL(image);
+		} */
 		
 	}
+	
 	
 </script>
 

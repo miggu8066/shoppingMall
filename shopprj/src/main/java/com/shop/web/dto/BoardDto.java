@@ -1,6 +1,10 @@
 package com.shop.web.dto;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+
+import org.springframework.web.multipart.MultipartFile;
 
 public class BoardDto {
 	private int boardKey;
@@ -8,7 +12,8 @@ public class BoardDto {
 	private String title;
 	private String content;
 	private Date regDate;
-	private String img;
+	private List<MultipartFile> img;
+	private List<String> db_img;
 	private int delState;
 	private String userName;
 	
@@ -16,28 +21,22 @@ public class BoardDto {
 		// TODO Auto-generated constructor stub
 	}
 	
-	
-	
-	public BoardDto(int userKey, String title, String content, Date regDate, String img) {
-		super();
+	public BoardDto(int userKey, String title, String content, Date regDate, String db_img) {
 		this.userKey = userKey;
 		this.title = title;
 		this.content = content;
 		this.regDate = regDate;
-		this.img = img;
+		this.db_img = Arrays.asList(db_img.split(","));
 	}
 
-
-
 	public BoardDto(int boardKey, int userKey, String title, Date regDate) {
-		super();
 		this.boardKey = boardKey;
 		this.userKey = userKey;
 		this.title = title;
 		this.regDate = regDate;
 	}
 
-	public BoardDto(int userKey, String title, String content, Date regDate, String img, int delState) {
+	public BoardDto(int userKey, String title, String content, Date regDate, List<MultipartFile> img, int delState) {
 		this.userKey = userKey;
 		this.title = title;
 		this.content = content;
@@ -86,11 +85,11 @@ public class BoardDto {
 		this.regDate = regDate;
 	}
 
-	public String getImg() {
+	public List<MultipartFile> getImg() {
 		return img;
 	}
 
-	public void setImg(String img) {
+	public void setImg(List<MultipartFile> img) {
 		this.img = img;
 	}
 
@@ -101,18 +100,24 @@ public class BoardDto {
 	public void setDelState(int delState) {
 		this.delState = delState;
 	}
-	
-	
-	
+
 	public int getBoardKey() {
 		return boardKey;
 	}
 
-
 	public void setBoardKey(int boardKey) {
 		this.boardKey = boardKey;
 	}
+	
+	
 
+	public List<String> getDb_img() {
+		return db_img;
+	}
+
+	public void setDb_img(List<String> db_img) {
+		this.db_img = db_img;
+	}
 
 	@Override
 	public String toString() {
