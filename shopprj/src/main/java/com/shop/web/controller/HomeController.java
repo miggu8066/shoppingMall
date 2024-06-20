@@ -1,5 +1,9 @@
 package com.shop.web.controller;
 
+import java.awt.datatransfer.SystemFlavorMap;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.Cookie;
@@ -27,7 +31,6 @@ import com.shop.web.service.MemberService;
 @Controller
 @RequestMapping("/home")
 public class HomeController {
-	
 	@Autowired
 	private MemberService memberService;
 	
@@ -52,7 +55,10 @@ public class HomeController {
 	}
 	
 	@PostMapping("/login")
-	public String login(@ModelAttribute LoginDto loginDto, HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String login(@ModelAttribute LoginDto loginDto, 
+			HttpServletRequest request, 
+			HttpServletResponse response, 
+			Model model) {
 		LoginDto authenticatedUser = loginService.loginUser(loginDto);
 		
 		if(authenticatedUser != null && loginDto.getUserPwd().equals(authenticatedUser.getUserPwd())) {
@@ -115,8 +121,10 @@ public class HomeController {
 		}
 	}
 	
-	@GetMapping("/board/detail")
-	public String boardDetail(HttpServletRequest request, @RequestParam("uid") int userId, @RequestParam("bid") int boardId, Model model) {
+	@PostMapping("/board/detail")
+	public String boardDetail(HttpServletRequest request, 
+			@RequestParam("uid") int userId, @RequestParam("bid") int boardId, 
+			Model model) {
 		int getFindKey = 0;
 		
 		String userName = (String) request.getAttribute("userName");
@@ -131,4 +139,51 @@ public class HomeController {
 		return "main.board.detail";
 		
 	}
+	
+	// 게시글 수정 프로세스
+	@PostMapping("/board/modifyProcess")
+    public String boardModifyProcess(
+    		@ModelAttribute BoardDto boardDto,
+    		@RequestParam(value = "existingImgs", required = false) String existingImages) {
+		List<String> uploadFileNames = new ArrayList<>();
+        
+        /*SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String formattedDate = sdf.format(regDate);*/
+		
+		if(existingImages == null) {
+			uploadFileNames = boardService.saveFiles(boardDto);
+		}
+		boardService.modifyBoard(boardDto, uploadFileNames);
+
+        return "redirect:/home/board";
+    }
+	
+	
+	
+	/* @PostMapping("/board/modifyProcess")
+    public String boardModify(@ModelAttribute BoardDto boardDto, @RequestParam("img") List<MultipartFile> img) {
+        // 이미지 파일들을 BoardDto에 설정
+        boardDto.setImg(img);
+
+        String userName = boardDto.getUserName();
+        Date regDate = boardDto.getRegDate();
+        String title = boardDto.getTitle();
+        String content = boardDto.getContent();
+
+        // 서버 측에서 받은 데이터 출력
+        System.out.println("작성자: " + userName);
+        System.out.println("작성일자: " + regDate);
+        System.out.println("제목: " + title);
+        System.out.println("내용: " + content);
+        System.out.println("이미지 파일: " + img);
+
+        for (MultipartFile file : img) {
+            System.out.println("파일 이름: " + file.getOriginalFilename());
+            System.out.println("파일 크기: " + file.getSize());
+        }
+
+        // 실제 처리 로직 추가 (예: 데이터베이스에 저장)
+
+        return "redirect:/home/board";
+    } */
 }

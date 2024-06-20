@@ -114,7 +114,6 @@
 				preview.appendChild(img);
 			};
 			
-			console.log(file);
 			reader.readAsDataURL(file);
 		}
 		
@@ -139,6 +138,8 @@
 	<style>
 		th {
 			background-color: #F4F4F4;
+			text-align: center;
+            vertical-align: middle !important;
 		}
 	</style>
 </head>

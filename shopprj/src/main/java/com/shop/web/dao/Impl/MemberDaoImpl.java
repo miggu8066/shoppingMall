@@ -3,6 +3,7 @@ package com.shop.web.dao.Impl;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 import javax.sql.DataSource;
 
@@ -29,14 +30,11 @@ public class MemberDaoImpl implements MemberDao{
 			Connection conn = dataSource.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			
-			java.util.Date utilDate = memberDto.getDate();
-			java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
-			
 			pstmt.setString(1, memberDto.getName());
 			pstmt.setString(2, memberDto.getId());
 			pstmt.setString(3, memberDto.getPwd());
 			pstmt.setString(4, memberDto.getEmail());
-			pstmt.setDate(5, sqlDate);
+			pstmt.setTimestamp(5, new Timestamp(memberDto.getDate().getTime()));
 			pstmt.setInt(6, memberDto.getDelState());
 			pstmt.executeUpdate();
 			

@@ -4,8 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -48,14 +48,13 @@ public class BoardDaoImpl implements BoardDao{
 	
 	String getUserkeyByUsernameQuery = "SELECT user_key FROM member where user_id = ?";
 	
+	
+	
 	@Override
 	public void insertBoard(BoardDto boardDto, List<String> uploadFileNames) {
 		try {
 			Connection conn = dataSource.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(insertSql);
-			
-			Date utilDate = boardDto.getRegDate();
-			java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
 			
 			String joinedFileNames = String.join(", ", uploadFileNames);
 			
@@ -63,7 +62,7 @@ public class BoardDaoImpl implements BoardDao{
 			pstmt.setString(2, boardDto.getTitle());
 			pstmt.setString(3, boardDto.getContent());
 			pstmt.setString(4, joinedFileNames);
-			pstmt.setDate(5, sqlDate);
+			pstmt.setTimestamp(5, new Timestamp(boardDto.getRegDate().getTime()));
 			pstmt.setInt(6, boardDto.getDelState());
 			
 			pstmt.executeUpdate();
@@ -132,23 +131,30 @@ public class BoardDaoImpl implements BoardDao{
 			ResultSet rs = pstmt.executeQuery();
 			
 			while(rs.next()) {
+				int boardKey = rs.getInt("board_key");
 				int userkey = rs.getInt("user_key");
 				String title = rs.getString("board_title");
 				String content = rs.getString("board_content");
 				java.sql.Date regDate 	= rs.getDate("board_regdate");
 				String db_img = rs.getString("board_img");
 				
-				boardDto = new BoardDto(userkey, title, content, regDate, db_img);
+				List<String> imgList = new ArrayList<>();
+				for(String img : db_img.split(",")) {
+					imgList.add(img);
+				}
 				
+				boardDto = new BoardDto(boardKey, userkey, title, content, regDate, imgList);
+				 
 				PreparedStatement Pstmt2 = conn.prepareStatement(selectMemberNameQuery);
 				Pstmt2.setInt(1, userId);
 				ResultSet rs2 = Pstmt2.executeQuery();
-				if(rs2.next()) {
+				if (rs2.next()) {
 					String userName = rs2.getString("user_name");
 					boardDto.setUserName(userName);
 				}
-				
+
 				Pstmt2.close();
+				 
 				
 			}
 			
@@ -180,6 +186,45 @@ public class BoardDaoImpl implements BoardDao{
 		}
 		
 		return getUserKey;
+	}
+
+	@Override
+	public void updateBoard(BoardDto boardDto, List<String> uploadFileNames) {
+		try {
+			StringBuilder updateQuery = new StringBuilder("UPDATE board SET board_moddate = ?, board_title = ?, board_content = ?");
+			String joinedFileNames = null;
+			int paramIndex = 1;
+			
+			if(!uploadFileNames.isEmpty()) {
+				updateQuery.append(", board_img = ?");
+				joinedFileNames = String.join(", ", uploadFileNames);
+			}
+			
+			updateQuery.append(" WHERE board_key = ? and user_key = ?");
+			
+			Connection conn = dataSource.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(updateQuery.toString());
+			
+			pstmt.setTimestamp(paramIndex++, new Timestamp(boardDto.getRegDate().getTime()));
+			pstmt.setString(paramIndex++, boardDto.getTitle());
+			pstmt.setString(paramIndex++, boardDto.getContent());
+			
+			if(!uploadFileNames.isEmpty()) {
+				pstmt.setString(paramIndex++, joinedFileNames);
+			}
+			
+			pstmt.setInt(paramIndex++, boardDto.getBoardKey());
+			pstmt.setInt(paramIndex++, boardDto.getUserKey());
+			
+			pstmt.executeUpdate();
+			
+			pstmt.close();
+			conn.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 	

@@ -102,4 +102,13 @@ public class BoardServiceImpl implements BoardService{
 		return uploadFileNames;
 	}
 
+	// 게시판 수정 serviceImpl 2024-06-19 이한결
+	@Override
+	public void modifyBoard(BoardDto boardDto, List<String> uploadFileNames) {
+		
+		boardDto.setRegDate(new Date());
+		
+		boardDao.updateBoard(boardDto, uploadFileNames);
+	}
+
 }
