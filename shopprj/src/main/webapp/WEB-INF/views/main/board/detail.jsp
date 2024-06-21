@@ -65,18 +65,27 @@
 		}
 		
 	}
+	
+	function deleteContent(){
+		
+		
+		if(confirm("게시글을 삭제 하시겠습니까?")){
+			document.editForm.action = "/home/board/deleteProcess";
+			document.editForm.submit();
+		}
+	}
 
 </script>
 <h2>상세글</h2>
 
 <div class="container text-right" >
-	<%-- <c:if test="${canEdit == boardDetail.userKey}"> --%>
+	<c:if test="${canEdit == boardDetail.userKey}">
 		<button id="modifyButton" name="modifyButton" class="btn btn-primary" onclick="modifyContent()">수정</button>
 		<%-- <a href="/home/board/edit?uid=${boardDetail.userKey}" class="btn btn-primary" onclick="modifyContent()">수정</a> --%>
-		<button id="deleteButton" name="deleteButton" class="btn btn-danger" onclick="">삭제</button>
+		<button id="deleteButton" name="deleteButton" class="btn btn-danger" onclick="deleteContent()">삭제</button>
 		<%-- <a href="/home/board/delete?uid=${boardDetail.userKey}" class="btn btn-danger">삭제</a> --%>
 		<button id="saveButton" name="saveButton" class="btn btn-success" onclick="saveContent()" style="display:none;">완료</button>
-	<%-- </c:if> --%>
+	</c:if>
 </div>
 
 <div class="container">

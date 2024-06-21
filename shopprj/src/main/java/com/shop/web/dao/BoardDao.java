@@ -10,4 +10,5 @@ public interface BoardDao {
 	public BoardDto detailBoard(int userId, int boardId);
 	public int getUserkeyByUsername(String sessionId);
 	public void updateBoard(BoardDto boardDto, List<String> uploadFileNames);
+	public void deleteBoardById(BoardDto boardDto);
 }

@@ -188,6 +188,7 @@ public class BoardDaoImpl implements BoardDao{
 		return getUserKey;
 	}
 
+	// 게시글 수정 Dao 구현체 2024-06-20 이한결
 	@Override
 	public void updateBoard(BoardDto boardDto, List<String> uploadFileNames) {
 		try {
@@ -225,6 +226,32 @@ public class BoardDaoImpl implements BoardDao{
 			e.printStackTrace();
 		}
 
+	}
+
+	// 게시글 삭제 Dao 구현체 (delState = 0) 2024-06-21 이한결
+	@Override
+	public void deleteBoardById(BoardDto boardDto) {
+		
+		String deleteBoardQuery = "UPDATE board SET delState = ? WHERE board_key = ? and user_key = ?";
+		
+		try {
+			Connection conn = dataSource.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(deleteBoardQuery);
+			
+			pstmt.setInt(1, 0);
+			pstmt.setInt(2, boardDto.getBoardKey());
+			pstmt.setInt(3, boardDto.getUserKey());
+			
+			pstmt.executeUpdate();
+			
+			pstmt.close();
+			conn.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 	}
 
 	

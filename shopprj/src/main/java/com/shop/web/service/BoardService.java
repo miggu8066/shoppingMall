@@ -10,6 +10,7 @@ public interface BoardService {
 	public BoardDto getBoardByUserId(int userId, int boardId);
 	public int findUserkeyBySession(String sessionId, int userId);
 	public List<String> saveFiles(BoardDto boardDto);
-	public void modifyBoard(BoardDto boarDto, List<String> uploadFileNames);
+	public void modifyBoard(BoardDto boardDto, List<String> uploadFileNames);
+	public void deleteBoard(BoardDto boardDto);
 	
 }

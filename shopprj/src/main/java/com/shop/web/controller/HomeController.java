@@ -158,32 +158,17 @@ public class HomeController {
         return "redirect:/home/board";
     }
 	
-	
-	
-	/* @PostMapping("/board/modifyProcess")
-    public String boardModify(@ModelAttribute BoardDto boardDto, @RequestParam("img") List<MultipartFile> img) {
-        // 이미지 파일들을 BoardDto에 설정
-        boardDto.setImg(img);
-
-        String userName = boardDto.getUserName();
-        Date regDate = boardDto.getRegDate();
-        String title = boardDto.getTitle();
-        String content = boardDto.getContent();
-
-        // 서버 측에서 받은 데이터 출력
-        System.out.println("작성자: " + userName);
-        System.out.println("작성일자: " + regDate);
-        System.out.println("제목: " + title);
-        System.out.println("내용: " + content);
-        System.out.println("이미지 파일: " + img);
-
-        for (MultipartFile file : img) {
-            System.out.println("파일 이름: " + file.getOriginalFilename());
-            System.out.println("파일 크기: " + file.getSize());
-        }
-
-        // 실제 처리 로직 추가 (예: 데이터베이스에 저장)
-
-        return "redirect:/home/board";
-    } */
+	// 게시글 삭제 프로세스
+	@PostMapping("/board/deleteProcess")
+	public String boardDeleteProcess(HttpServletRequest request, @ModelAttribute BoardDto boardDto) {
+		String userName = (String) request.getAttribute("userName");
+		
+		if(userName == null) {
+			return "redirect:/home/main";
+		}
+		
+		boardService.deleteBoard(boardDto);
+		
+		return "redirect:/home/board";
+	}
 }

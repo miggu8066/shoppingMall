@@ -102,7 +102,7 @@ public class BoardServiceImpl implements BoardService{
 		return uploadFileNames;
 	}
 
-	// 게시판 수정 serviceImpl 2024-06-19 이한결
+	// 게시판 수정 service 구현체 2024-06-19 이한결
 	@Override
 	public void modifyBoard(BoardDto boardDto, List<String> uploadFileNames) {
 		
@@ -110,5 +110,13 @@ public class BoardServiceImpl implements BoardService{
 		
 		boardDao.updateBoard(boardDto, uploadFileNames);
 	}
+
+	// 게시글 삭제 service 구현체 2024-06-21 이한결
+	@Override
+	public void deleteBoard(BoardDto boardDto) {
+		
+		boardDao.deleteBoardById(boardDto);
+	}
+
 
 }
