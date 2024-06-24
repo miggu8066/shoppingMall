@@ -145,7 +145,6 @@
 	</style>
 </head>
 <body>
-
 	<!-- header 부분 -->
 	<tiles:insertAttribute name="header" />
 	

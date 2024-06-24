@@ -35,10 +35,7 @@ public class BoardDaoImpl implements BoardDao{
 			+ " VALUE "
 			+ "(?, ?, ?, ?, ?, ?)";
 	
-	String selectListSql
-			= "SELECT * FROM board "
-			+ "WHERE delState = ? "
-			+ "ORDER BY board_regdate DESC";
+	
 	
 	String selectMemberNameQuery
 			= "SELECT * FROM member "
@@ -76,13 +73,22 @@ public class BoardDaoImpl implements BoardDao{
 	}
 
 	@Override
-	public List<BoardDto> listBoard() {
+	public List<BoardDto> listBoard(int pageStart, int perPageNum) {
 		List<BoardDto> list = new ArrayList<>();
+		String selectListSql
+		= "SELECT * FROM board "
+		+ "WHERE delState = ? "
+		+ "ORDER BY board_regdate DESC "
+		+ "LIMIT ?, ?";
 		
 		try {
 			Connection conn = dataSource.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(selectListSql);
+			
 			pstmt.setInt(1, 1);
+			pstmt.setInt(2, pageStart);
+			pstmt.setInt(3, perPageNum);
+			
 			ResultSet rs = pstmt.executeQuery();
 			
 			while(rs.next()) {
@@ -252,6 +258,33 @@ public class BoardDaoImpl implements BoardDao{
 		}
 		
 		
+	}
+
+	@Override
+	public int selectTotalBoardCount() {
+		int count = 0;
+		
+		String selectTotalBoardCountQuery = "SELECT COUNT(*) FROM board WHERE delState = ? ";
+		
+		try {
+			Connection conn = dataSource.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(selectTotalBoardCountQuery);
+			
+			pstmt.setInt(1, 1);
+			
+			ResultSet rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				count = rs.getInt("COUNT(*)");
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		return count;
 	}
 
 	

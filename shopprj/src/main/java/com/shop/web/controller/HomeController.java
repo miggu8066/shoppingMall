@@ -1,9 +1,6 @@
 package com.shop.web.controller;
 
-import java.awt.datatransfer.SystemFlavorMap;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.Cookie;
@@ -19,11 +16,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.shop.web.dto.BoardDto;
 import com.shop.web.dto.LoginDto;
 import com.shop.web.dto.MemberDto;
+import com.shop.web.page.PageMaker;
+import com.shop.web.page.Paging;
 import com.shop.web.service.BoardService;
 import com.shop.web.service.LoginService;
 import com.shop.web.service.MemberService;
@@ -91,10 +89,19 @@ public class HomeController {
 	}
 	
 	@GetMapping("/board")
-	public String board(HttpServletRequest request, Model model) {
+	public String board(@ModelAttribute Paging paging, Model model) {
 		
-		List<BoardDto> boardList = boardService.getBoardList();
+		// 게시글 리스트 가져오기(시작행 번호와 한페이지당 보여줄 게시글 수 기준)
+		List<BoardDto> boardList = boardService.getBoardList(paging.getPageStart(), paging.getPerPageNum());
 		model.addAttribute("boardList", boardList);
+		
+		PageMaker pageMaker = new PageMaker();
+		pageMaker.setCri(paging);
+		
+		int totalCount = boardService.getTotalBoardCount();
+		pageMaker.setTotalCount(totalCount);
+		
+		model.addAttribute("pageMaker", pageMaker);
 		
 		return "main.board.list";
 	}

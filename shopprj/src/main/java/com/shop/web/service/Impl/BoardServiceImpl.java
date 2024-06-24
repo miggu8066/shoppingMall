@@ -36,10 +36,10 @@ public class BoardServiceImpl implements BoardService{
 	}
 
 	@Override
-	public List<BoardDto> getBoardList() {
+	public List<BoardDto> getBoardList(int pageStart, int perPageNum) {
 
 		
-		return boardDao.listBoard();
+		return boardDao.listBoard(pageStart, perPageNum);
 	}
 
 	@Override
@@ -116,6 +116,14 @@ public class BoardServiceImpl implements BoardService{
 	public void deleteBoard(BoardDto boardDto) {
 		
 		boardDao.deleteBoardById(boardDto);
+	}
+
+	@Override
+	public int getTotalBoardCount() {
+		
+		int totalcount = boardDao.selectTotalBoardCount();
+		
+		return totalcount;
 	}
 
 

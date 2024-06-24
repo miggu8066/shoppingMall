@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
 <script>
     function submitDetailForm(uid, bid) {
     	document.getElementById("uid").value = uid;
@@ -46,6 +47,28 @@
 		</table>
 	</div>
 </form>
+
+<div class="container text-center">
+	<ul class="btn-group pagination">
+	    <c:if test="${pageMaker.prev}">
+	        <li>
+	        	<a href='<c:url value="/home/board?nowPage=1"/>'><i class="fa fa-angle-double-left"></i></a>
+	            <a href='<c:url value="/home/board?nowPage=${pageMaker.startPage-1}"/>'><i class="fa fa-chevron-left"> 이전</i></a>
+	        </li>
+	    </c:if>
+	    <c:forEach begin="${pageMaker.startPage}" end="${pageMaker.endPage}" var="pageNum">
+	        <li class="page-item ${pageNum == pageMaker.cri.nowPage ? 'active' : ''}">
+	            <a href='<c:url value="/home/board?nowPage=${pageNum}"/>'><i class="fa">${pageNum}</i></a>
+	        </li>
+	    </c:forEach>
+	    <c:if test="${pageMaker.next && pageMaker.endPage > 0}">
+	        <li>
+	            <a href='<c:url value="/home/board?nowPage=${pageMaker.endPage+1}"/>'><i class="fa fa-chevron-right"> 다음</i></a>
+	            <a href='<c:url value="/home/board?nowPage=${pageMaker.tempEndPage}"/>'><i class="fa fa-angle-double-right"></i></a>
+	        </li>
+	    </c:if>
+	</ul>
+</div>
 
 <div class="container">
     <div class="row">
