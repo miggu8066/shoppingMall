@@ -73,21 +73,45 @@ public class BoardDaoImpl implements BoardDao{
 	}
 
 	@Override
-	public List<BoardDto> listBoard(int pageStart, int perPageNum) {
+	public List<BoardDto> listBoard(int pageStart, int perPageNum, Integer searchType, String searchBoard) {
 		List<BoardDto> list = new ArrayList<>();
-		String selectListSql
-		= "SELECT * FROM board "
-		+ "WHERE delState = ? "
-		+ "ORDER BY board_regdate DESC "
-		+ "LIMIT ?, ?";
+		String realSearchType = null;
+		int paramIndex = 1;
+		StringBuilder selectListSql = new StringBuilder("SELECT * FROM board where delState = ? ");
+		
+		if(searchBoard != null && !searchBoard.isEmpty() && !searchBoard.trim().isEmpty()) {
+			selectListSql.append("AND ? LIKE %?% ");
+			
+			if(searchType == 1) {
+				realSearchType = "board_title";
+			}
+			
+			if(searchType == 2) {
+				realSearchType = "board_title";
+			}
+			
+			/*if(searchType == 3) {
+				realSearchType = "user_Key";
+			}*/
+		}
+		
+		if(searchType == 1 || searchType == 2 || searchType == 3) {
+			selectListSql.append("ORDER BY board_regdate DESC LIMIT ?, ?");
+		}
 		
 		try {
 			Connection conn = dataSource.getConnection();
-			PreparedStatement pstmt = conn.prepareStatement(selectListSql);
+			PreparedStatement pstmt = conn.prepareStatement(selectListSql.toString());
 			
-			pstmt.setInt(1, 1);
-			pstmt.setInt(2, pageStart);
-			pstmt.setInt(3, perPageNum);
+			pstmt.setInt(paramIndex++, 1);
+			
+			if(realSearchType != null) {
+				pstmt.setString(paramIndex++, realSearchType);
+				pstmt.setString(paramIndex++, searchBoard);
+			}
+			
+			pstmt.setInt(paramIndex++, pageStart);
+			pstmt.setInt(paramIndex++, perPageNum);
 			
 			ResultSet rs = pstmt.executeQuery();
 			

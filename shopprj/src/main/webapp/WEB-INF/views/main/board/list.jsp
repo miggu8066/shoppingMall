@@ -8,8 +8,23 @@
     	document.getElementById("bid").value = bid;
         document.getElementById("listForm").submit();
     }
+    
+    
 </script>
+
 <h2 class="section-title" >product board</h2>
+
+<form id="searchForm" name="searchForm" method="get" action="/home/board" class="form-inline">
+	<div class="container text-right">
+		<select name="searchType" class="form-control">		
+			<option value="1">전체</option>
+			<option value="2">제목</option>
+			<option value="3">작성자</option>
+		</select>
+		<input type="text" id="searchBoard" name="searchBoard" class="form-control" placeholder="검색어를 입력하세요"/>
+		<input type="submit" value="검색" />
+	</div>
+</form>
 
 <form id="listForm" method="post" action="/home/board/detail" >
 	<input type="hidden" id="uid" name="uid"/>

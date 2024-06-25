@@ -36,10 +36,10 @@ public class BoardServiceImpl implements BoardService{
 	}
 
 	@Override
-	public List<BoardDto> getBoardList(int pageStart, int perPageNum) {
+	public List<BoardDto> getBoardList(int pageStart, int perPageNum, Integer searchType, String searchBoard) {
 
 		
-		return boardDao.listBoard(pageStart, perPageNum);
+		return boardDao.listBoard(pageStart, perPageNum, searchType, searchBoard);
 	}
 
 	@Override

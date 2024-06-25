@@ -89,11 +89,20 @@ public class HomeController {
 	}
 	
 	@GetMapping("/board")
-	public String board(@ModelAttribute Paging paging, Model model) {
+	public String board(@ModelAttribute Paging paging, 
+			Model model, 
+			@RequestParam(value = "searchType", required = false, defaultValue = "0") int searchType, 
+			@RequestParam(value = "searchBoard", required = false) String searchBoard) {
+		
+		System.out.println(searchType);
+		System.out.println(searchBoard);
 		
 		// 게시글 리스트 가져오기(시작행 번호와 한페이지당 보여줄 게시글 수 기준)
-		List<BoardDto> boardList = boardService.getBoardList(paging.getPageStart(), paging.getPerPageNum());
-		model.addAttribute("boardList", boardList);
+		/*
+		 * List<BoardDto> boardList = boardService.getBoardList(paging.getPageStart(),
+		 * paging.getPerPageNum(), searchType, searchBoard);
+		 * model.addAttribute("boardList", boardList);
+		 */
 		
 		PageMaker pageMaker = new PageMaker();
 		pageMaker.setCri(paging);

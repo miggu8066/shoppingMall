@@ -6,7 +6,7 @@ import com.shop.web.dto.BoardDto;
 
 public interface BoardService {
 	public void writeBoard(BoardDto boardDto, String userName, List<String> uploadFileNames);
-	public List<BoardDto> getBoardList(int pageStart, int perPageNum);
+	public List<BoardDto> getBoardList(int pageStart, int perPageNum, Integer searchType, String searchBoard);
 	public BoardDto getBoardByUserId(int userId, int boardId);
 	public int findUserkeyBySession(String sessionId, int userId);
 	public List<String> saveFiles(BoardDto boardDto);
