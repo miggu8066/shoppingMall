@@ -36,7 +36,7 @@ public class BoardServiceImpl implements BoardService{
 	}
 
 	@Override
-	public List<BoardDto> getBoardList(int pageStart, int perPageNum, Integer searchType, String searchBoard) {
+	public List<BoardDto> getBoardList(int pageStart, int perPageNum, int searchType, String searchBoard) {
 
 		
 		return boardDao.listBoard(pageStart, perPageNum, searchType, searchBoard);
@@ -119,9 +119,9 @@ public class BoardServiceImpl implements BoardService{
 	}
 
 	@Override
-	public int getTotalBoardCount() {
+	public int getTotalBoardCount(int searchType, String searchBoard) {
 		
-		int totalcount = boardDao.selectTotalBoardCount();
+		int totalcount = boardDao.selectTotalBoardCount(searchType, searchBoard);
 		
 		return totalcount;
 	}

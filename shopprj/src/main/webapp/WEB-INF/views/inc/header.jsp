@@ -166,7 +166,7 @@
                 <ul class="nav navbar-nav">
                     <li class="active"><a href="/home/main">홈</a></li>
                     <li><a href="shop.html">상품 페이지</a></li>
-                    <li><a href="/home/board">상품게시판</a></li>
+                    <li><a href="/home/board">전체 게시판</a></li>
                 </ul>
             </div>  
         </div>

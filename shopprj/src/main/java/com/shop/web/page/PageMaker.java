@@ -32,8 +32,8 @@ public class PageMaker {
 		if(startPage <= 0)
 			startPage = 1;
 		
-		tempEndPage = (int) (Math.ceil(totalCount / cri.getPerPageNum()));
-		
+		tempEndPage = (int) (Math.ceil(totalCount / (double) cri.getPerPageNum()));
+
 		if(endPage > tempEndPage) {
 			endPage = tempEndPage;
 		}

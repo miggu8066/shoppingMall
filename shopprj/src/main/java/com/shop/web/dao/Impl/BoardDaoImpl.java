@@ -73,31 +73,26 @@ public class BoardDaoImpl implements BoardDao{
 	}
 
 	@Override
-	public List<BoardDto> listBoard(int pageStart, int perPageNum, Integer searchType, String searchBoard) {
+	public List<BoardDto> listBoard(int pageStart, int perPageNum, int searchType, String searchBoard) {
 		List<BoardDto> list = new ArrayList<>();
-		String realSearchType = null;
 		int paramIndex = 1;
-		StringBuilder selectListSql = new StringBuilder("SELECT * FROM board where delState = ? ");
+		StringBuilder selectListSql = new StringBuilder(
+				"SELECT b.*, m.user_name " + 
+				"FROM board b LEFT JOIN member m " + 
+				"ON b.user_key = m.user_key " + 
+				"WHERE b.delState = ? ");
 		
-		if(searchBoard != null && !searchBoard.isEmpty() && !searchBoard.trim().isEmpty()) {
-			selectListSql.append("AND ? LIKE %?% ");
-			
-			if(searchType == 1) {
-				realSearchType = "board_title";
-			}
-			
+		if(searchBoard != null && !searchBoard.trim().isEmpty()) {
 			if(searchType == 2) {
-				realSearchType = "board_title";
+				selectListSql.append("AND b.board_title LIKE ? ");
+			} else if(searchType == 3) {
+				selectListSql.append("AND m.user_name LIKE ? ");
+			} else {
+				selectListSql.append("AND (b.board_title LIKE ? OR m.user_name LIKE ?) ");
 			}
-			
-			/*if(searchType == 3) {
-				realSearchType = "user_Key";
-			}*/
 		}
 		
-		if(searchType == 1 || searchType == 2 || searchType == 3) {
-			selectListSql.append("ORDER BY board_regdate DESC LIMIT ?, ?");
-		}
+		selectListSql.append("ORDER BY b.board_regdate DESC LIMIT ?, ? ");
 		
 		try {
 			Connection conn = dataSource.getConnection();
@@ -105,14 +100,19 @@ public class BoardDaoImpl implements BoardDao{
 			
 			pstmt.setInt(paramIndex++, 1);
 			
-			if(realSearchType != null) {
-				pstmt.setString(paramIndex++, realSearchType);
-				pstmt.setString(paramIndex++, searchBoard);
+			if(searchBoard != null && !searchBoard.trim().isEmpty()) {
+				String searchWord = "%" + searchBoard.trim() + "%";
+				if(searchType == 2 || searchType == 3) {
+					pstmt.setString(paramIndex++, searchWord);
+				} else {
+					pstmt.setString(paramIndex++, searchWord);
+					pstmt.setString(paramIndex++, searchWord);
+				}
 			}
 			
 			pstmt.setInt(paramIndex++, pageStart);
 			pstmt.setInt(paramIndex++, perPageNum);
-			
+
 			ResultSet rs = pstmt.executeQuery();
 			
 			while(rs.next()) {
@@ -285,16 +285,39 @@ public class BoardDaoImpl implements BoardDao{
 	}
 
 	@Override
-	public int selectTotalBoardCount() {
+	public int selectTotalBoardCount(int searchType, String searchBoard) {
 		int count = 0;
+		int paramIndex = 1;
 		
-		String selectTotalBoardCountQuery = "SELECT COUNT(*) FROM board WHERE delState = ? ";
+		StringBuilder selectTotalBoardCountQuery = new StringBuilder("SELECT COUNT(*) FROM board b LEFT JOIN member m ON b.user_key = m.user_key WHERE b.delState = ? ");
+		
+		if(searchBoard != null && !searchBoard.trim().isEmpty()) {
+			if(searchType == 2) {
+				selectTotalBoardCountQuery.append("AND b.board_title LIKE ? ");
+			} else if(searchType == 3) {
+				selectTotalBoardCountQuery.append("AND m.user_name LIKE ? ");
+			} else {
+				selectTotalBoardCountQuery.append("AND (b.board_title LIKE ? OR m.user_name LIKE ?) ");
+			}
+		}
+		
 		
 		try {
 			Connection conn = dataSource.getConnection();
-			PreparedStatement pstmt = conn.prepareStatement(selectTotalBoardCountQuery);
+			PreparedStatement pstmt = conn.prepareStatement(selectTotalBoardCountQuery.toString());
 			
-			pstmt.setInt(1, 1);
+			pstmt.setInt(paramIndex++, 1);
+			if(searchBoard != null && !searchBoard.trim().isEmpty()) {
+				String searchWord = "%" + searchBoard.trim() + "%";
+				if(searchType == 2) {
+					pstmt.setString(paramIndex++, searchWord);
+				} else if(searchType == 3) {
+					pstmt.setString(paramIndex++, searchWord);
+				} else {
+					pstmt.setString(paramIndex++, searchWord);
+					pstmt.setString(paramIndex++, searchWord);
+				}
+			}
 			
 			ResultSet rs = pstmt.executeQuery();
 			
